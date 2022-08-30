@@ -1,0 +1,66 @@
+#wrapper{
+  background:rgb(80,124,124);
+  border-radius:5px;
+  padding:10px 20px 10px 20px;
+
+  #monthlyPayment{
+    background:rgb(55,85,85);
+  }
+}
+
+.debt{
+  background:rgb(100,100,100);
+    border:solid;
+    margin:20px 25px;
+    padding:10px;
+    resize:none;
+    box-shadow: 10px 10px rgb(30,45,45);
+    font-size:14px;
+
+  button{
+    border:solid;
+    background:rgb(55,85,85);
+    font-size:14px;
+    border-top:solid;
+    border-width:1px;
+    margin:5px 5px 5px 0px;
+    &:hover{
+      background:rgb(80,124,124);
+      cursor:pointer;
+    }
+  }
+
+  input{
+    background:rgb(56,56,56);
+    width:50px;
+    margin-bottom:5px;
+
+  }
+}
+
+#debtAdder{
+  width:50px;
+  height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#debtArray{
+  display:flex;
+  flex-wrap: wrap;
+  align-items:center;
+}
+
+.btnWrap{
+  display:flex;
+  justify-content:center;
+}
+
+#nameInput{
+  width:100%;
+}
+
+#principalInput{
+  width:50%;
+}

@@ -1,69 +1,199 @@
+import React from 'react';
+import styles from '../styles/DebtManager.module.scss';
+import Debt from '../components/Debt.js'
 import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
+export default class MyComp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      debtObjArr: [
+        {
+          name: "Student Loan",
+          principal: 20000,
+          interestRate: 2,
+          compoundingType: "annually",
+          minimumPayment: 50
+        }
+      ],
+      monthlyPayment:0,
+      timeToPayOff: 0
+    };
+    this.addDebt = this.addDebt.bind(this);
+    this.createDebt = this.createDebt.bind(this);
+    this.editDebt = this.editDebt.bind(this);
+    this.changePay = this.changePay.bind(this);
+    //this.changeTime = this.changeTime.bind(this);
+    this.CalculateTime = this.CalculateTime.bind(this);
+  }
+
+  createDebt() {
+    return {
+      name: "",
+      principal: 0,
+      interestRate: 0,
+      compoundingType: "annually",
+      minimumPayment: 0
+    };
+  }
+
+  editDebt(id = 0, newDebt) {
+    let tempArr = [...this.state.debtObjArr];
+    //if there is a new debt update it, otherwise deleteDebt
+    newDebt ? tempArr.splice(id, 1, newDebt) : tempArr.splice(id, 1);
+    console.log(tempArr[0].name);
+    this.setState((state) => ({
+      debtObjArr: tempArr,
+      monthlyPayment: state.monthlyPayment,
+      timeToPayOff: state.timeToPayOff
+    }));
+  }
+
+  addDebt() {
+    this.setState((state) => ({
+      debtObjArr: [...state.debtObjArr, this.createDebt()]
+    }));
+  }
+
+ CalculateTime(debtArr, monthlyPayment) {
+      let workArr = [...debtArr];
+      workArr.forEach((debt) => {
+        if (debt.compoundingType === "annually") {
+          debt.interestRate = debt.interestRate / 12;
+        }
+      });
+
+      //sort in order of interest rate
+      workArr.sort((a, b) => (a.interestRate > b.interestRate ? -1 : 1));
+
+      let monthsPassed = 0;
+
+      while (
+        workArr.reduce(
+          (accumulator, current) => accumulator + current.principal,
+          0
+        ) > 0 &&
+        monthsPassed < 1200
+      ) {
+        //incriment Time
+        monthsPassed++;
+        //console.log(monthsPassed)
+        let myMonthlyPayment = monthlyPayment;
+        workArr.forEach((debt) => {
+          if (debt.principal < debt.minimumPayment) {
+            //pay off all if possible
+            myMonthlyPayment -= debt.principal;
+            //console.log("payed",debt.principal,debt.name,"payed off");
+            debt.principal = 0;
+          } else {
+            //pay minimum on each account
+            debt.principal -= debt.minimumPayment;
+            //pay minimum on each account
+            myMonthlyPayment -= debt.minimumPayment;
+            //console.log("payed",debt.minimumPayment,debt.name,debt.principal);
+          }
+        });
+
+        //pay the rest to the highest interest account
+        workArr.forEach((debt) => {
+          if (debt.principal > 0) {
+            if (debt.principal > myMonthlyPayment) {
+              //spend all money on this debt
+              debt.principal -= myMonthlyPayment;
+              //console.log("payed",myMonthlyPayment,debt.name,debt.principal);
+              myMonthlyPayment = 0;
+            } else {
+              //pay off the debt and continue
+              myMonthlyPayment -= debt.principal;
+              //console.log("payed",debt.principal,debt.name,"payed off");
+              debt.principal = 0;
+            }
+          }
+        });
+
+        workArr.forEach((debt) => {
+          debt.principal = debt.principal * (1 + debt.interestRate / 100);
+          //console.log("EOM",debt.name,debt.principal);
+        });
+      }
+      return monthsPassed;
+    }
+
+changePay(e) {
+    //console.log("changing Pay");
+    //avoid interference with state
+    let myNewArr = [];
+    this.state.debtObjArr.forEach((debt) => {
+      myNewArr.push(Object.assign({}, debt));
+    });
+    let monthsToPayOff = this.CalculateTime(myNewArr, e.target.value);
+    this.setState((state) => ({
+      monthlyPayment: e.target.value,
+      timeToPayOff: monthsToPayOff
+    }));
+  } //end change pay$$$
+
+  /*changeTime(e) {
+    console.log("changingTime")
+     //avoid interference with state
+    let myNewArr = [];
+    this.state.debtObjArr.forEach((debt) => {
+      myNewArr.push(Object.assign({}, debt));
+    });
+    let currentPayment = myNewArr.reduce( (cumulative,debt) => cumulative + debt.principal,0);
+    let currentTime = 1
+    while (currentTime != e.target.value){
+      currentPayment--;
+      //this will take some time...
+      console.log("trying: ", currentPayment,"to get",e.target.value);
+      currentTime = this.CalculateTime(myNewArr, currentPayment);
+    }
+    console.log("final:",currentTime,currentPayment);
+
+    this.setState((state) => ({
+      timeToPayOff: e.target.value
+    }));
+  } *///end changeTime
+  //may revisit this later
+
+  render() {
+    return (
+      <>
+      <div id={styles.wrapper}>
       <Head>
-        <title>Create Next App</title>
-        <meta name="description" content="Generated by create next app" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/Icon3.png" />
       </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+        <h1>Debt Manager</h1>
+        <label for="monthlyPayment">
+          Amount you can pay per month:
+          <input
+            type="number"
+            id={styles.monthlyPayment}
+            value={this.state.monthlyPayment}
+            onChange={this.changePay}
+            min={this.state.debtObjArr.reduce((x,y) => x + y.minimumPayment , 0)}
+          />
+        </label>
+        <div>
+          Months until all debts payed: {this.state.timeToPayOff}
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
-    </div>
-  )
+        <div id={styles.debtArray}>
+          {this.state.debtObjArr.map((item, index) => {
+            return (
+              <Debt
+                debtEditor={this.editDebt}
+                debtItem={item}
+                debtNumber={index}
+              />
+            );
+          })}
+          <div className={styles.debt} id={styles.debtAdder}>
+            <button onClick={this.addDebt}>+</button>
+          </div>
+        </div>
+        <footer>by Andrew Toussaint</footer>
+      </div>
+    </>
+    );
+  }
 }

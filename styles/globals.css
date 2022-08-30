@@ -1,4 +1,4 @@
-html,
+/*html,
 body {
   padding: 0;
   margin: 0;
@@ -23,4 +23,26 @@ a {
     color: white;
     background: black;
   }
+}*/ /*original global style*/
+
+/*my global styles*/
+html {
+  background-color: rgb(56,56,56);
+  font-family:monospace;
+}
+
+h1{
+  font-size:32px;
+  text-align:center;
+}
+
+fieldset{
+  border:none;
+}
+
+/*removes arrows*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
