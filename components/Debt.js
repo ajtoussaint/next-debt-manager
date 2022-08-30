@@ -95,7 +95,7 @@ export default class Debt extends React.Component {
           <div>
             Interest Compunding Type:
             <fieldset id="interestType" onChange={this.handleChangeCT}>
-              <label for="annually">
+              <label htmlFor="annually">
                 <input
                   type="radio"
                   id="annually"
@@ -105,7 +105,7 @@ export default class Debt extends React.Component {
                 />
                 Annually
               </label>
-              <label for="monthly">
+              <label htmlFor="monthly">
                 <input
                   type="radio"
                   id="monthly"

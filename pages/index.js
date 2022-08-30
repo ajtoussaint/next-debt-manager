@@ -164,7 +164,7 @@ changePay(e) {
         <link rel="icon" href="/Icon3.png" />
       </Head>
         <h1>Debt Manager</h1>
-        <label for="monthlyPayment">
+        <label htmlFor="monthlyPayment">
           Amount you can pay per month:
           <input
             type="number"
@@ -184,6 +184,7 @@ changePay(e) {
                 debtEditor={this.editDebt}
                 debtItem={item}
                 debtNumber={index}
+                key={index}
               />
             );
           })}
