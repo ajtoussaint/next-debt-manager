@@ -39,7 +39,7 @@ export default function FirstTest() {
       <button onClick={handleClick}>Times Clicked: {buttonPresses}</button>
       {myArr.map((item,index) => {
           return(
-           <TestComp magicNumer={item} />
+           <TestComp magicNumer={item} key={index} />
           );
         }
        )
