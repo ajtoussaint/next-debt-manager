@@ -9,7 +9,7 @@ export default class MyComp extends React.Component {
     this.state = {
       debtObjArr: [
         {
-          name: "Student Loan",
+          name: "Student Loans",
           principal: 20000,
           interestRate: 2,
           compoundingType: "annually",
